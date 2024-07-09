@@ -1,0 +1,275 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{71707BF4-433A-4870-94A7-9EAC42FA96DA}|Comedor.Api\\Comedor.Api.csproj|c:\\users\\coterog\\documents\\proyectos github\\api comedor git\\api_comedor\\comedor.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{71707BF4-433A-4870-94A7-9EAC42FA96DA}|Comedor.Api\\Comedor.Api.csproj|solutionrelative:comedor.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{234AE24A-EFA9-4A2D-964A-8BA33C697EF1}|Comedor.Service.EventHandler\\Comedor.Service.EventHandler.csproj|c:\\users\\coterog\\documents\\proyectos github\\api comedor git\\api_comedor\\comedor.service.eventhandler\\handlers\\incidencias\\createincidenciaeventhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{234AE24A-EFA9-4A2D-964A-8BA33C697EF1}|Comedor.Service.EventHandler\\Comedor.Service.EventHandler.csproj|solutionrelative:comedor.service.eventhandler\\handlers\\incidencias\\createincidenciaeventhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97B9304D-AD37-4BDB-94B8-42E438A11822}|Comedor.Domain\\Comedor.Domain.csproj|c:\\users\\coterog\\documents\\proyectos github\\api comedor git\\api_comedor\\comedor.domain\\comedor.domain.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{97B9304D-AD37-4BDB-94B8-42E438A11822}|Comedor.Domain\\Comedor.Domain.csproj|solutionrelative:comedor.domain\\comedor.domain.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97B9304D-AD37-4BDB-94B8-42E438A11822}|Comedor.Domain\\Comedor.Domain.csproj|c:\\users\\coterog\\documents\\proyectos github\\api comedor git\\api_comedor\\comedor.domain\\dincidencias\\incidencia.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{97B9304D-AD37-4BDB-94B8-42E438A11822}|Comedor.Domain\\Comedor.Domain.csproj|solutionrelative:comedor.domain\\dincidencias\\incidencia.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97B9304D-AD37-4BDB-94B8-42E438A11822}|Comedor.Domain\\Comedor.Domain.csproj|c:\\users\\coterog\\documents\\proyectos github\\api comedor git\\api_comedor\\comedor.domain\\dincidencias\\configuracionincidencias.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{97B9304D-AD37-4BDB-94B8-42E438A11822}|Comedor.Domain\\Comedor.Domain.csproj|solutionrelative:comedor.domain\\dincidencias\\configuracionincidencias.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97B9304D-AD37-4BDB-94B8-42E438A11822}|Comedor.Domain\\Comedor.Domain.csproj|c:\\users\\coterog\\documents\\proyectos github\\api comedor git\\api_comedor\\comedor.domain\\dincidencias\\detalleincidencia.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{97B9304D-AD37-4BDB-94B8-42E438A11822}|Comedor.Domain\\Comedor.Domain.csproj|solutionrelative:comedor.domain\\dincidencias\\detalleincidencia.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{17ECC894-0522-48DC-8BE6-3B2971BAE1D1}|Service.Common.Paging\\Service.Common.Paging.csproj|c:\\users\\coterog\\documents\\proyectos github\\api comedor git\\api_comedor\\service.common.paging\\pagingextension.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{17ECC894-0522-48DC-8BE6-3B2971BAE1D1}|Service.Common.Paging\\Service.Common.Paging.csproj|solutionrelative:service.common.paging\\pagingextension.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{91FE6D93-867E-488A-B7D7-4D264881943F}|Service.Common.Collection\\Service.Common.Collection.csproj|c:\\users\\coterog\\documents\\proyectos github\\api comedor git\\api_comedor\\service.common.collection\\service.common.collection.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{91FE6D93-867E-488A-B7D7-4D264881943F}|Service.Common.Collection\\Service.Common.Collection.csproj|solutionrelative:service.common.collection\\service.common.collection.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{71707BF4-433A-4870-94A7-9EAC42FA96DA}|Comedor.Api\\Comedor.Api.csproj|c:\\users\\coterog\\documents\\proyectos github\\api comedor git\\api_comedor\\comedor.api\\controllers\\incidencias\\incidenciacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{71707BF4-433A-4870-94A7-9EAC42FA96DA}|Comedor.Api\\Comedor.Api.csproj|solutionrelative:comedor.api\\controllers\\incidencias\\incidenciacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{234AE24A-EFA9-4A2D-964A-8BA33C697EF1}|Comedor.Service.EventHandler\\Comedor.Service.EventHandler.csproj|c:\\users\\coterog\\documents\\proyectos github\\api comedor git\\api_comedor\\comedor.service.eventhandler\\commands\\incidencias\\incidenciacreatecommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{234AE24A-EFA9-4A2D-964A-8BA33C697EF1}|Comedor.Service.EventHandler\\Comedor.Service.EventHandler.csproj|solutionrelative:comedor.service.eventhandler\\commands\\incidencias\\incidenciacreatecommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8A1FB64-CDD9-4AB1-9A20-6367670791A1}|Comedor.Service.Queries\\Comedor.Service.Queries.csproj|c:\\users\\coterog\\documents\\proyectos github\\api comedor git\\api_comedor\\comedor.service.queries\\queries\\cedulasevaluacion\\cedulaqueryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8A1FB64-CDD9-4AB1-9A20-6367670791A1}|Comedor.Service.Queries\\Comedor.Service.Queries.csproj|solutionrelative:comedor.service.queries\\queries\\cedulasevaluacion\\cedulaqueryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{234AE24A-EFA9-4A2D-964A-8BA33C697EF1}|Comedor.Service.EventHandler\\Comedor.Service.EventHandler.csproj|c:\\users\\coterog\\documents\\proyectos github\\api comedor git\\api_comedor\\comedor.service.eventhandler\\handlers\\cedulasevaluacion\\enviarcedula\\enviarcedulaevaluacionupdateeventhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{234AE24A-EFA9-4A2D-964A-8BA33C697EF1}|Comedor.Service.EventHandler\\Comedor.Service.EventHandler.csproj|solutionrelative:comedor.service.eventhandler\\handlers\\cedulasevaluacion\\enviarcedula\\enviarcedulaevaluacionupdateeventhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{234AE24A-EFA9-4A2D-964A-8BA33C697EF1}|Comedor.Service.EventHandler\\Comedor.Service.EventHandler.csproj|c:\\users\\coterog\\documents\\proyectos github\\api comedor git\\api_comedor\\comedor.service.eventhandler\\handlers\\cedulasevaluacion\\actualizacioncedula\\cedulaevaluacionupdateeventhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{234AE24A-EFA9-4A2D-964A-8BA33C697EF1}|Comedor.Service.EventHandler\\Comedor.Service.EventHandler.csproj|solutionrelative:comedor.service.eventhandler\\handlers\\cedulasevaluacion\\actualizacioncedula\\cedulaevaluacionupdateeventhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{71707BF4-433A-4870-94A7-9EAC42FA96DA}|Comedor.Api\\Comedor.Api.csproj|c:\\users\\coterog\\documents\\proyectos github\\api comedor git\\api_comedor\\comedor.api\\controllers\\cedulasevaluacion\\queries\\cedulaquerycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{71707BF4-433A-4870-94A7-9EAC42FA96DA}|Comedor.Api\\Comedor.Api.csproj|solutionrelative:comedor.api\\controllers\\cedulasevaluacion\\queries\\cedulaquerycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{71707BF4-433A-4870-94A7-9EAC42FA96DA}|Comedor.Api\\Comedor.Api.csproj|c:\\users\\coterog\\documents\\proyectos github\\api comedor git\\api_comedor\\comedor.api\\controllers\\cedulasevaluacion\\commands\\cedulacommandcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{71707BF4-433A-4870-94A7-9EAC42FA96DA}|Comedor.Api\\Comedor.Api.csproj|solutionrelative:comedor.api\\controllers\\cedulasevaluacion\\commands\\cedulacommandcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 5,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ConfiguracionIncidencias.cs",
+              "DocumentMoniker": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Domain\\DIncidencias\\ConfiguracionIncidencias.cs",
+              "RelativeDocumentMoniker": "Comedor.Domain\\DIncidencias\\ConfiguracionIncidencias.cs",
+              "ToolTip": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Domain\\DIncidencias\\ConfiguracionIncidencias.cs",
+              "RelativeToolTip": "Comedor.Domain\\DIncidencias\\ConfiguracionIncidencias.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-05T01:32:01.314Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "DetalleIncidencia.cs",
+              "DocumentMoniker": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Domain\\DIncidencias\\DetalleIncidencia.cs",
+              "RelativeDocumentMoniker": "Comedor.Domain\\DIncidencias\\DetalleIncidencia.cs",
+              "ToolTip": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Domain\\DIncidencias\\DetalleIncidencia.cs",
+              "RelativeToolTip": "Comedor.Domain\\DIncidencias\\DetalleIncidencia.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-05T01:31:59.8Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Incidencia.cs",
+              "DocumentMoniker": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Domain\\DIncidencias\\Incidencia.cs",
+              "RelativeDocumentMoniker": "Comedor.Domain\\DIncidencias\\Incidencia.cs",
+              "ToolTip": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Domain\\DIncidencias\\Incidencia.cs",
+              "RelativeToolTip": "Comedor.Domain\\DIncidencias\\Incidencia.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-05T01:31:57.985Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Comedor.Domain",
+              "DocumentMoniker": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Domain\\Comedor.Domain.csproj",
+              "RelativeDocumentMoniker": "Comedor.Domain\\Comedor.Domain.csproj",
+              "ToolTip": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Domain\\Comedor.Domain.csproj",
+              "RelativeToolTip": "Comedor.Domain\\Comedor.Domain.csproj",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2024-07-05T01:31:49.972Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "PagingExtension.cs",
+              "DocumentMoniker": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Service.Common.Paging\\PagingExtension.cs",
+              "RelativeDocumentMoniker": "Service.Common.Paging\\PagingExtension.cs",
+              "ToolTip": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Service.Common.Paging\\PagingExtension.cs",
+              "RelativeToolTip": "Service.Common.Paging\\PagingExtension.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-05T01:31:41.337Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Api\\appsettings.json",
+              "RelativeDocumentMoniker": "Comedor.Api\\appsettings.json",
+              "ToolTip": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Api\\appsettings.json",
+              "RelativeToolTip": "Comedor.Api\\appsettings.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAAEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-07-04T18:34:39.222Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CreateIncidenciaEventHandler.cs",
+              "DocumentMoniker": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Service.EventHandler\\Handlers\\Incidencias\\CreateIncidenciaEventHandler.cs",
+              "RelativeDocumentMoniker": "Comedor.Service.EventHandler\\Handlers\\Incidencias\\CreateIncidenciaEventHandler.cs",
+              "ToolTip": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Service.EventHandler\\Handlers\\Incidencias\\CreateIncidenciaEventHandler.cs",
+              "RelativeToolTip": "Comedor.Service.EventHandler\\Handlers\\Incidencias\\CreateIncidenciaEventHandler.cs",
+              "ViewState": "AQIAAB8AAAAAAAAAAAAIwEMAAAA4AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-05T01:33:01.416Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Service.Common.Collection",
+              "DocumentMoniker": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Service.Common.Collection\\Service.Common.Collection.csproj",
+              "RelativeDocumentMoniker": "Service.Common.Collection\\Service.Common.Collection.csproj",
+              "ToolTip": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Service.Common.Collection\\Service.Common.Collection.csproj",
+              "RelativeToolTip": "Service.Common.Collection\\Service.Common.Collection.csproj",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2024-07-05T01:31:32.541Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "IncidenciaController.cs",
+              "DocumentMoniker": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Api\\Controllers\\Incidencias\\IncidenciaController.cs",
+              "RelativeDocumentMoniker": "Comedor.Api\\Controllers\\Incidencias\\IncidenciaController.cs",
+              "ToolTip": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Api\\Controllers\\Incidencias\\IncidenciaController.cs",
+              "RelativeToolTip": "Comedor.Api\\Controllers\\Incidencias\\IncidenciaController.cs",
+              "ViewState": "AQIAAHUAAAAAAAAAAIA7wBEAAAARAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-05T01:25:12.23Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "IncidenciaCreateCommand.cs",
+              "DocumentMoniker": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Service.EventHandler\\Commands\\Incidencias\\IncidenciaCreateCommand.cs",
+              "RelativeDocumentMoniker": "Comedor.Service.EventHandler\\Commands\\Incidencias\\IncidenciaCreateCommand.cs",
+              "ToolTip": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Service.EventHandler\\Commands\\Incidencias\\IncidenciaCreateCommand.cs",
+              "RelativeToolTip": "Comedor.Service.EventHandler\\Commands\\Incidencias\\IncidenciaCreateCommand.cs",
+              "ViewState": "AQIAAAYAAAAAAAAAAAAwwAkAAAAbAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-05T00:02:31.695Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "CedulaQueryService.cs",
+              "DocumentMoniker": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Service.Queries\\Queries\\CedulasEvaluacion\\CedulaQueryService.cs",
+              "RelativeDocumentMoniker": "Comedor.Service.Queries\\Queries\\CedulasEvaluacion\\CedulaQueryService.cs",
+              "ToolTip": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Service.Queries\\Queries\\CedulasEvaluacion\\CedulaQueryService.cs",
+              "RelativeToolTip": "Comedor.Service.Queries\\Queries\\CedulasEvaluacion\\CedulaQueryService.cs",
+              "ViewState": "AQIAACMAAAAAAAAAAAAswAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-05T00:00:40.04Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "EnviarCedulaEvaluacionUpdateEventHandler.cs",
+              "DocumentMoniker": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Service.EventHandler\\Handlers\\CedulasEvaluacion\\EnviarCedula\\EnviarCedulaEvaluacionUpdateEventHandler.cs",
+              "RelativeDocumentMoniker": "Comedor.Service.EventHandler\\Handlers\\CedulasEvaluacion\\EnviarCedula\\EnviarCedulaEvaluacionUpdateEventHandler.cs",
+              "ToolTip": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Service.EventHandler\\Handlers\\CedulasEvaluacion\\EnviarCedula\\EnviarCedulaEvaluacionUpdateEventHandler.cs",
+              "RelativeToolTip": "Comedor.Service.EventHandler\\Handlers\\CedulasEvaluacion\\EnviarCedula\\EnviarCedulaEvaluacionUpdateEventHandler.cs",
+              "ViewState": "AQIAAJAAAAAAAAAAAAAowAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-05T00:00:15.117Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "CedulaEvaluacionUpdateEventHandler.cs",
+              "DocumentMoniker": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Service.EventHandler\\Handlers\\CedulasEvaluacion\\ActualizacionCedula\\CedulaEvaluacionUpdateEventHandler.cs",
+              "RelativeDocumentMoniker": "Comedor.Service.EventHandler\\Handlers\\CedulasEvaluacion\\ActualizacionCedula\\CedulaEvaluacionUpdateEventHandler.cs",
+              "ToolTip": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Service.EventHandler\\Handlers\\CedulasEvaluacion\\ActualizacionCedula\\CedulaEvaluacionUpdateEventHandler.cs",
+              "RelativeToolTip": "Comedor.Service.EventHandler\\Handlers\\CedulasEvaluacion\\ActualizacionCedula\\CedulaEvaluacionUpdateEventHandler.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-05T00:00:04.821Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "CedulaQueryController.cs",
+              "DocumentMoniker": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Api\\Controllers\\CedulasEvaluacion\\Queries\\CedulaQueryController.cs",
+              "RelativeDocumentMoniker": "Comedor.Api\\Controllers\\CedulasEvaluacion\\Queries\\CedulaQueryController.cs",
+              "ToolTip": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Api\\Controllers\\CedulasEvaluacion\\Queries\\CedulaQueryController.cs",
+              "RelativeToolTip": "Comedor.Api\\Controllers\\CedulasEvaluacion\\Queries\\CedulaQueryController.cs",
+              "ViewState": "AQIAADsAAAAAAAAAAAAgwAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-04T23:59:30.556Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "CedulaCommandController.cs",
+              "DocumentMoniker": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Api\\Controllers\\CedulasEvaluacion\\Commands\\CedulaCommandController.cs",
+              "RelativeDocumentMoniker": "Comedor.Api\\Controllers\\CedulasEvaluacion\\Commands\\CedulaCommandController.cs",
+              "ToolTip": "C:\\Users\\coterog\\Documents\\Proyectos GITHUB\\API Comedor GIT\\API_Comedor\\Comedor.Api\\Controllers\\CedulasEvaluacion\\Commands\\CedulaCommandController.cs",
+              "RelativeToolTip": "Comedor.Api\\Controllers\\CedulasEvaluacion\\Commands\\CedulaCommandController.cs",
+              "ViewState": "AQIAACoAAAAAAAAAAAAYwAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-04T23:59:17.199Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
