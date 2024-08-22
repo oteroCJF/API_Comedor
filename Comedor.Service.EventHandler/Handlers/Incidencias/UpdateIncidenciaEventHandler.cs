@@ -94,6 +94,8 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
         public decimal GetPenaDeductiva(IncidenciaUpdateCommand incidencia, Factura factura)
         {
             decimal montoPenalizacion = 0;
+            CreateIncidenciaEventHandler creaIncidencia = new CreateIncidenciaEventHandler();
+
             var cedula = _context.CedulaEvaluacion.Single(ce => ce.Id == incidencia.CedulaEvaluacionId);
 
             var respuesta = _context.Respuestas.Single(r => r.Pregunta == incidencia.Pregunta && r.CedulaEvaluacionId == incidencia.CedulaEvaluacionId);
@@ -127,9 +129,14 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
                 else if (cuestionario.Formula.Contains("ENSERESA"))
                 {
                     var fechaEntrega = incidencia.FechaEntrega;
+                    if (!incidencia.EntregaEnseres)
+                    {
+                        fechaEntrega = GetUltimoDiaHabilMes(incidencia.FechaLimite);
+                    }
                     var fechaLimite = incidencia.FechaLimite;
                     TimeSpan diffDate = fechaEntrega - fechaLimite;
-                    var diasAtraso = diffDate.Days;
+                    //   var diasAtraso = diffDate.Days;
+                    var diasAtraso = creaIncidencia.CalcularDiasHabiles(fechaLimite, fechaEntrega);
 
                     montoPenalizacion = GetCostoFechaInventario(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje);
                     montoPenalizacion = diasAtraso <= 0 ? montoPenalizacion : montoPenalizacion * diasAtraso;
@@ -137,9 +144,15 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
                 else if (cuestionario.Formula.Contains("ENSERESB"))
                 {
                     var fechaEntrega = incidencia.FechaEntrega;
+                    if (!incidencia.EntregaEnseres)
+                    {
+                        fechaEntrega = GetUltimoDiaHabilMes(incidencia.FechaLimite);
+                    }
                     var fechaLimite = incidencia.FechaLimite;
                     TimeSpan diffDate = fechaEntrega - fechaLimite;
-                    var diasAtraso = diffDate.Days;
+                    //var diasAtraso = diffDate.Days;
+                    var diasAtraso = creaIncidencia.CalcularDiasHabiles(fechaLimite, fechaEntrega);
+                    
 
                     montoPenalizacion = GetCostoFechaInventario(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * incidencia.Cantidad;
                     montoPenalizacion = diasAtraso <= 0 ? montoPenalizacion : montoPenalizacion * diasAtraso;
@@ -147,6 +160,10 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
                 else if (cuestionario.Formula.Contains("ENSERESC"))
                 {
                     var fechaEntrega = incidencia.FechaEntrega;
+                    if (!incidencia.EntregaEnseres)
+                    {
+                        fechaEntrega = GetUltimoDiaHabilMes(incidencia.FechaLimite);
+                    }
                     var fechaAcordada = incidencia.FechaAcordadaAdmin;
                     TimeSpan diffDate = fechaEntrega - fechaAcordada;
                     var diasAtraso = diffDate.Days;
@@ -172,14 +189,25 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
             return montoPenalizacion;
         }
 
+
         public Factura GetFactura(IncidenciaUpdateCommand incidencia)
         {
             var cedula = _context.CedulaEvaluacion.Single(ce => ce.Id == incidencia.CedulaEvaluacionId);
             var repositorio = _context.Repositorios.Single(r => r.Anio == cedula.Anio && r.ContratoId == cedula.ContratoId
                                                                 && r.MesId == cedula.MesId);
-            var facturas = _context.Facturas.Single(f => f.RepositorioId == repositorio.Id &&
-                                                            cedula.InmuebleId == f.InmuebleId && f.Tipo.Equals("Factura"));
 
+            var facturas = new Factura();
+
+            if (incidencia.Pregunta == 25 || incidencia.Pregunta == 26 || incidencia.Pregunta == 27)
+            {
+                facturas = _context.Facturas.Single(f => f.RepositorioId == (repositorio.Id - 1) &&
+                                                            cedula.InmuebleId == f.InmuebleId && f.Tipo.Equals("Factura") && f.FechaEliminacion == null);
+            }
+            else
+            {
+                facturas = _context.Facturas.Single(f => f.RepositorioId == repositorio.Id &&
+                                                                cedula.InmuebleId == f.InmuebleId && f.Tipo.Equals("Factura") && f.FechaEliminacion == null);
+            }
             return facturas;
         }
 
@@ -285,6 +313,28 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
                 }
             }
             return fechaInicial;
+        }
+
+        public DateTime GetUltimoDiaHabilMes(DateTime fechaInicial)
+        {
+            DateTime inicioMes = new DateTime(fechaInicial.Year, fechaInicial.Month, 1);
+            DateTime lastDayMonth = inicioMes.AddMonths(1).AddDays(-1);
+            DayOfWeek day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(lastDayMonth);
+
+            if (day == DayOfWeek.Saturday || day == DayOfWeek.Sunday)
+            {
+                while (true)
+                {
+                    lastDayMonth = lastDayMonth.AddDays(-1);
+                    day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(lastDayMonth);
+                    if (day != DayOfWeek.Saturday && day != DayOfWeek.Sunday)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return lastDayMonth;
         }
     }
 }

@@ -8,6 +8,10 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Comedor.Service.EventHandler.Handlers.Incidencias
 {
@@ -15,6 +19,7 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
     {
         private readonly ApplicationDbContext _context;
 
+        public CreateIncidenciaEventHandler() { }
         public CreateIncidenciaEventHandler(ApplicationDbContext context)
         {
             _context = context;
@@ -34,7 +39,7 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
                 TipoId = request.TipoId,
                 Pregunta = request.Pregunta,
                 FechaIncidencia = request.FechaIncidencia,
-                FechaProgramada= request.FechaProgramada,
+                FechaProgramada = request.FechaProgramada,
                 UltimoDia = request.UltimoDia,
                 FechaRealizada = request.FechaRealizada,
                 FechaInventario = request.FechaInventario,
@@ -66,7 +71,7 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
                         var dtIncidencia = new DetalleIncidencia();
                         dtIncidencia.IncidenciaId = incidencia.Id;
                         dtIncidencia.CIncidenciaId = dt;
-                        dtIncidencia.MontoPenalizacion = GetPrecioUnitarioServicio(request, factura) * Convert.ToDecimal(0.01)*incidencia.Cantidad;
+                        dtIncidencia.MontoPenalizacion = GetPrecioUnitarioServicio(request, factura) * Convert.ToDecimal(0.01) * incidencia.Cantidad;
                         totalDI += dtIncidencia.MontoPenalizacion;
 
                         await _context.AddAsync(dtIncidencia);
@@ -103,11 +108,12 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
             {
                 if (cuestionario.Formula.Contains("CDAS"))
                 {
-                    montoPenalizacion = GetCostoDiaAnteriorServicio(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje)*incidencia.Cantidad;
+                    montoPenalizacion = GetCostoDiaAnteriorServicio(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * incidencia.Cantidad;
                 }
                 else if (cuestionario.Formula.Contains("CUS"))
                 {
-                    montoPenalizacion = GetPrecioUnitarioServicio(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje)*incidencia.Cantidad;
+                    //AGREGAR MINUTOS DE RETRASO PARA EL CALCULO DE LA PENALIZACIÓN DESPUÉS DE LAS DOS HORAS
+                    montoPenalizacion = GetPrecioUnitarioServicio(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * incidencia.Cantidad;
                 }
                 else if (cuestionario.Formula.Contains("CDS"))
                 {
@@ -124,19 +130,31 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
                 else if (cuestionario.Formula.Contains("ENSERESA"))
                 {
                     var fechaEntrega = incidencia.FechaEntrega;
+                    if (!incidencia.EntregaEnseres)
+                    {
+                        fechaEntrega = GetUltimoDiaHabilMes(incidencia.FechaLimite);
+                    }
                     var fechaLimite = incidencia.FechaLimite;
                     TimeSpan diffDate = fechaEntrega - fechaLimite;
-                    var diasAtraso = diffDate.Days;
+                    //   var diasAtraso = diffDate.Days;
+                    var diasAtraso = CalcularDiasHabiles(fechaLimite, fechaEntrega);
 
                     montoPenalizacion = GetCostoFechaInventario(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje);
                     montoPenalizacion = diasAtraso <= 0 ? montoPenalizacion : montoPenalizacion * diasAtraso;
                 }
+
                 else if (cuestionario.Formula.Contains("ENSERESB"))
                 {
                     var fechaEntrega = incidencia.FechaEntrega;
+                    if (!incidencia.EntregaEnseres)
+                    {
+                        fechaEntrega = GetUltimoDiaHabilMes(incidencia.FechaLimite);
+                    }
+
                     var fechaLimite = incidencia.FechaLimite;
                     TimeSpan diffDate = fechaEntrega - fechaLimite;
-                    var diasAtraso = diffDate.Days;
+                    //var diasAtraso = diffDate.Days;
+                    var diasAtraso = CalcularDiasHabiles(fechaLimite, fechaEntrega);
 
                     montoPenalizacion = GetCostoFechaInventario(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * incidencia.Cantidad;
                     montoPenalizacion = diasAtraso <= 0 ? montoPenalizacion : montoPenalizacion * diasAtraso;
@@ -144,6 +162,10 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
                 else if (cuestionario.Formula.Contains("ENSERESC"))
                 {
                     var fechaEntrega = incidencia.FechaEntrega;
+                    if (!incidencia.EntregaEnseres)
+                    {
+                        fechaEntrega = GetUltimoDiaHabilMes(incidencia.FechaLimite);
+                    }
                     var fechaAcordada = incidencia.FechaAcordadaAdmin;
                     TimeSpan diffDate = fechaEntrega - fechaAcordada;
                     var diasAtraso = diffDate.Days;
@@ -159,7 +181,7 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
                     var diasAtraso = diffDate.Days;
                     var montoFactura = GetCostoSemanal(incidencia, factura);
                     var porcentaje = Convert.ToDecimal(cuestionario.Porcentaje);
-                    montoPenalizacion =  (montoFactura *  porcentaje)* diasAtraso;
+                    montoPenalizacion = (montoFactura * porcentaje) * diasAtraso;
                 }
                 else if (cuestionario.Formula.Contains("CTPS"))
                 {
@@ -175,9 +197,19 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
             var cedula = _context.CedulaEvaluacion.Single(ce => ce.Id == incidencia.CedulaEvaluacionId);
             var repositorio = _context.Repositorios.Single(r => r.Anio == cedula.Anio && r.ContratoId == cedula.ContratoId
                                                                 && r.MesId == cedula.MesId);
-            var facturas = _context.Facturas.Single(f => f.RepositorioId == repositorio.Id &&
-                                                            cedula.InmuebleId == f.InmuebleId && f.Tipo.Equals("Factura") && !f.FechaEliminacion.HasValue);
+            var facturas = new Factura();
 
+            if (incidencia.Pregunta == 25 || incidencia.Pregunta == 26 || incidencia.Pregunta == 27)
+            {
+                facturas = _context.Facturas.Single(f => (f.RepositorioId) == (repositorio.Id - 1) &&
+                                                            cedula.InmuebleId == f.InmuebleId && f.Tipo.Equals("Factura") && f.FechaEliminacion == null);
+            }
+            else
+            {
+                facturas = _context.Facturas.Single(f => f.RepositorioId == repositorio.Id &&
+                                                    cedula.InmuebleId == f.InmuebleId &&
+                                                    f.Tipo.Equals("Factura") && f.FechaEliminacion == null);
+            }
             return facturas;
         }
 
@@ -187,7 +219,7 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
 
             return conceptosFactura.PrecioUnitario;
         }
-        
+
         public decimal GetCostoDiaServicio(IncidenciaCreateCommand incidencia, Factura factura)
         {
             var conceptosFactura = _context.ConceptosFactura.Where(c => c.FacturaId == factura.Id && c.FechaServicio == incidencia.FechaIncidencia).Sum(f => f.Subtotal);
@@ -197,10 +229,10 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
 
         public decimal GetCostoDiaAnteriorServicio(IncidenciaCreateCommand incidencia, Factura factura)
         {
-            var diaAnterior = _context.ConceptosFactura.Where(c => c.FacturaId == factura.Id && c.FechaServicio < incidencia.FechaIncidencia).OrderByDescending(o =>o.FechaServicio).First();
+            var diaAnterior = _context.ConceptosFactura.Where(c => c.FacturaId == factura.Id && c.FechaServicio < incidencia.FechaIncidencia).OrderByDescending(o => o.FechaServicio).First();
             decimal conceptosFactura = 0;
 
-            if(diaAnterior != null)
+            if (diaAnterior != null)
             {
                 conceptosFactura = diaAnterior.Subtotal;
             }
@@ -235,6 +267,86 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
             return minutos;
         }
 
+        //METODOS PARA CALCULAR LOS DÍAS INHABILES (TEMPORAL) PARA EL 2024
+        public  int CalcularDiasHabiles(DateTime fechaInicio, DateTime fechaFin)
+        {
+            int diasHabiles = 0;
+
+
+            for (; true;)
+            {
+                fechaInicio = fechaInicio.AddDays(1);
+
+                if (!EsFinDeSemana(fechaInicio) && !EsInhabil(fechaInicio))
+                {
+                    diasHabiles++;
+                }
+
+                if (fechaInicio == fechaFin)
+                {
+                    break;
+                }
+            }
+
+            return diasHabiles;
+        }
+
+        
+        private bool EsFinDeSemana(DateTime fecha)
+        {
+            return fecha.DayOfWeek == DayOfWeek.Saturday || fecha.DayOfWeek == DayOfWeek.Sunday;
+        }
+
+        private bool EsInhabil(DateTime fecha)
+        {
+            List<DateTime> diasInhabiles = new List<DateTime>()
+            {
+                  new DateTime(2024, 01, 01),
+                  new DateTime(2024, 02, 05),
+                  new DateTime(2024, 03, 18),
+                  new DateTime(2024, 03, 27),
+                  new DateTime(2024, 03, 28),
+                  new DateTime(2024, 03, 29),
+                  new DateTime(2024, 05, 01),
+                  new DateTime(2024, 07, 16),
+                  new DateTime(2024, 07, 17),
+                  new DateTime(2024, 07, 18),
+                  new DateTime(2024, 07, 19),
+                  new DateTime(2024, 07, 22),
+                  new DateTime(2024, 07, 23),
+                  new DateTime(2024, 07, 24),
+                  new DateTime(2024, 07, 25),
+                  new DateTime(2024, 07, 26),
+                  new DateTime(2024, 07, 29),
+                  new DateTime(2024, 07, 30),
+                  new DateTime(2024, 07, 31),
+                               new DateTime(2024, 09, 16),
+                               new DateTime(2024, 10, 01),
+                               new DateTime(2024, 11, 01),
+                               new DateTime(2024, 11, 18),
+                               new DateTime(2024, 12, 16),
+                               new DateTime(2024, 12, 17),
+                               new DateTime(2024, 12, 18),
+                               new DateTime(2024, 12, 19),
+                               new DateTime(2024, 12, 20),
+                               new DateTime(2024, 12, 23),
+                               new DateTime(2024, 12, 24),
+                               new DateTime(2024, 12, 25),
+                               new DateTime(2024, 12, 26),
+                               new DateTime(2024, 12, 27),
+                               new DateTime(2024, 12, 30),
+                               new DateTime(2024, 12, 31)
+            };
+            if (diasInhabiles.Contains(fecha))
+            {
+                Debug.WriteLine("ENCONTRÉ UN DÍA INHABIL:" + fecha);
+            }
+            return diasInhabiles.Contains(fecha);
+        }
+
+
+
+
         public decimal GetCostoSemanal(IncidenciaCreateCommand incidencia, Factura factura)
         {
             var fechaInicio = GetFechaInicialCostoSemanal(incidencia, factura);
@@ -249,14 +361,14 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
             var fechaInicial = new DateTime();
             var fechas = _context.ConceptosFactura.Where(c => c.FacturaId == factura.Id);
             bool inhabil = false;
-            foreach(var fc in fechas)
+            foreach (var fc in fechas)
             {
                 DayOfWeek day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(fc.FechaServicio);
                 if (day == DayOfWeek.Monday)
                 {
                     inhabil = false;
                     fechaInicial = fc.FechaServicio;
-                }               
+                }
 
 
                 if (fc.FechaServicio == incidencia.UltimoDia)
@@ -284,5 +396,87 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
             return fechaInicial;
         }
 
+        public DateTime GetUltimoDiaHabilMes(DateTime fechaInicial)
+        {
+            DateTime inicioMes = new DateTime(fechaInicial.Year, fechaInicial.Month, 1);
+            DateTime lastDayMonth = inicioMes.AddMonths(1).AddDays(-1);
+            DayOfWeek day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(lastDayMonth);
+
+            if (day == DayOfWeek.Saturday || day == DayOfWeek.Sunday)
+            {
+                while (true)
+                {
+                    lastDayMonth = lastDayMonth.AddDays(-1);
+                    day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(lastDayMonth);
+                    if (day != DayOfWeek.Saturday && day != DayOfWeek.Sunday)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return lastDayMonth;
+        }
+
+        //  METODO PARA CALCULAR EL NUMERO DE DÍAS HABILES ENTRE DOS FECHAS
+
+        //public async Task<JsonResult> CalculaDiasHabilesEntreDosFechas(string fechaLim, string fechaEnt)
+        //{
+        //    int cuentaDiasHabiles = 0;
+        //    var fechaLimite = Convert.ToDateTime(fechaLim);
+        //    var fechaEntrega = Convert.ToDateTime(fechaEnt);
+
+        //    List<DateTime> diasInhabiles = new List<DateTime>()
+        //    {
+        //         new DateTime(2024, 01, 01),
+        //          new DateTime(2024, 02, 05),
+        //          new DateTime(2024, 03, 18),
+        //          new DateTime(2024, 05, 01),
+        //          new DateTime(2024, 07, 16),
+        //          new DateTime(2024, 07, 17),
+        //          new DateTime(2024, 07, 18),
+        //          new DateTime(2024, 07, 19),
+        //          new DateTime(2024, 07, 23),
+        //          new DateTime(2024, 07, 24),
+        //          new DateTime(2024, 07, 25),
+        //          new DateTime(2024, 07, 26),
+        //          new DateTime(2024, 07, 22),
+        //          new DateTime(2024, 07, 29),
+        //          new DateTime(2024, 07, 30),
+        //          new DateTime(2024, 07, 31),
+        //                     new DateTime(2024, 09, 16),
+        //                      new DateTime(2024, 11, 18),
+        //                       new DateTime(2024, 12, 16),
+        //                       new DateTime(2024, 12, 17),
+        //                       new DateTime(2024, 12, 18),
+        //                       new DateTime(2024, 12, 19),
+        //                       new DateTime(2024, 12, 20),
+        //                       new DateTime(2024, 12, 23),
+        //                       new DateTime(2024, 12, 24),
+        //                       new DateTime(2024, 12, 25),
+        //                       new DateTime(2024, 12, 26),
+        //                       new DateTime(2024, 12, 27),
+        //                       new DateTime(2024, 12, 30),
+        //                       new DateTime(2024, 12, 31)
+        //    };
+
+        //    for (; true;)
+        //    {
+        //        fechaLimite = fechaLimite.AddDays(1);
+        //        DayOfWeek day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(fechaLimite);
+
+        //        if (!await.EsDiaInhabil(fechaLimite.Year, fechaLimite.ToString("yyyy-MM-ddTHH:mm:ss")) && day != DayOfWeek.Saturday && DayOfWeek.Sunday != day)
+        //        {
+        //            cuentaDiasHabiles++;
+        //        }
+
+        //        if (fechaLimite == fechaEntrega)
+        //        {
+        //            break;
+        //        }
+        //    }
+
+        //    return new JsonResult(cuentaDiasHabiles);
+        //}
     }
 }
