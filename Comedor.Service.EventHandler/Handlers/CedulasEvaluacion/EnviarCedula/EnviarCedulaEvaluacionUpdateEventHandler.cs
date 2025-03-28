@@ -53,7 +53,10 @@ namespace Comedor.Service.EventHandler.Handlers.CedulasEvaluacion
                     cedula.EstatusId = request.EstatusId;
                     if (calificacion < 10)
                     {
-                        string calif = calificacion.ToString().Substring(0, 3);
+                        //string calif = calificacion.ToString().Substring(0, 3);
+                        //cedula.Calificacion = Convert.ToDouble(calif);
+
+                        string calif = (Math.Round(calificacion, 1)).ToString();
                         cedula.Calificacion = Convert.ToDouble(calif);
                     }
                     else
@@ -146,12 +149,10 @@ namespace Comedor.Service.EventHandler.Handlers.CedulasEvaluacion
             foreach (var rs in respuestas)
             {
                 var cm = cuestionario.Single(c => c.Consecutivo == rs.Pregunta);
-                if (cm.ACLRS == rs.Respuesta && !rs.Detalles.Equals("N/A") && !rs.Detalles.Equals("N/E")
-                    && !rs.Detalles.Equals("N/R") && rs.MontoPenalizacion != 0)
+                if (cm.ACLRS == rs.Respuesta && !rs.Detalles.Equals("N/A") && !rs.Detalles.Equals("N/E") && !rs.Detalles.Equals("N/R") && rs.MontoPenalizacion != 0)
                 {
-                    calidad = !calidad;
-                    incidencias = _context.Incidencias.Where(i => i.CedulaEvaluacionId == cedula && i.Pregunta == cm.Consecutivo
-                                                            && !i.FechaEliminacion.HasValue).Count();
+                    calidad = false;
+                    incidencias = _context.Incidencias.Where(i => i.CedulaEvaluacionId == cedula && i.Pregunta == cm.Consecutivo && !i.FechaEliminacion.HasValue).Count();
 
                     var listIncidencias = _context.Incidencias.Where(i => i.CedulaEvaluacionId == cedula &&
                                                                       i.Pregunta == cm.Consecutivo &&

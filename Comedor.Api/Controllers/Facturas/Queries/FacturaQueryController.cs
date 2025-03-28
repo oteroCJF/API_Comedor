@@ -49,7 +49,7 @@ namespace Comedor.Api.Controllers.Facturas.Queries
         }
 
         [Route("getFacturasByInmueble/{inmueble}/{facturacion}")]
-        [HttpGet]
+        [HttpGet]                                                                                                                                                                                                                                          
         public async Task<List<FacturaDto>> GetFacturasByInmueble(int inmueble, int facturacion)
         {
             var facturas = await _facturas.GetFacturasByInmuebleAsync(inmueble, facturacion);

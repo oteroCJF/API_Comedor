@@ -76,7 +76,8 @@ namespace Comedor.Service.Queries.Queries.Entregables
         public async Task<DataCollection<EntregableDto>> GetEntregablesValidados()
         {
             var entregables = await _context.Entregables
-                .Where(e => e.Validado.HasValue && !e.FechaEliminacion.HasValue)
+                //.Where(e => e.Validado.HasValue && !e.FechaEliminacion.HasValue)
+                .Where(e => e.Validado.HasValue && !e.FechaEliminacion.HasValue && new[] { 6, 1, 7 }.Contains(e.EntregableId))
                 .Select(e=> new EntregableDto { 
                     Id = e.Id,
                     CedulaEvaluacionId = e.CedulaEvaluacionId,
@@ -84,7 +85,7 @@ namespace Comedor.Service.Queries.Queries.Entregables
                     EstatusId= e.EstatusId,
                     Validado = e.Validado
                 })
-                .GetPagedAsync(1,5000);
+                .GetPagedAsync(1,10000);
 
             return entregables.MapTo<DataCollection<EntregableDto>>();
         }

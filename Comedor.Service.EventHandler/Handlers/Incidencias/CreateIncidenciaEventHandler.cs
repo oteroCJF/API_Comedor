@@ -27,70 +27,73 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
 
         public async Task<Incidencia> Handle(IncidenciaCreateCommand request, CancellationToken cancellationToken)
         {
-            var factura = GetFactura(request);
+            var coincideMes = ComparaMeses(request);
+          
+                var factura = GetFactura(request);
 
-            var montoPenalizacion = GetPenaDeductiva(request, factura);
+                var montoPenalizacion = GetPenaDeductiva(request, factura);
 
-            var incidencia = new Incidencia
-            {
-                UsuarioId = request.UsuarioId,
-                CedulaEvaluacionId = request.CedulaEvaluacionId,
-                IncidenciaId = request.IncidenciaId,
-                TipoId = request.TipoId,
-                Pregunta = request.Pregunta,
-                FechaIncidencia = request.FechaIncidencia,
-                FechaProgramada = request.FechaProgramada,
-                UltimoDia = request.UltimoDia,
-                FechaRealizada = request.FechaRealizada,
-                FechaInventario = request.FechaInventario,
-                FechaNotificacion = request.FechaNotificacion,
-                FechaAcordadaAdmin = request.FechaAcordadaAdmin,
-                FechaLimite = request.FechaLimite,
-                FechaEntrega = request.FechaEntrega,
-                EntregaEnseres = request.EntregaEnseres,
-                HoraInicio = Convert.ToDateTime(request.HoraInicio).TimeOfDay,
-                HoraReal = Convert.ToDateTime(request.HoraReal).TimeOfDay,
-                Ponderacion = request.Ponderacion,
-                Cantidad = request.Cantidad,
-                Observaciones = request.Observaciones,
-                Penalizable = montoPenalizacion > 0 ? true : false,
-                MontoPenalizacion = montoPenalizacion,
-                FechaCreacion = DateTime.Now
-            };
-
-            try
-            {
-                await _context.AddAsync(incidencia);
-                await _context.SaveChangesAsync();
-
-                if (request.DTIncidencia.Count() != 0)
+                var incidencia = new Incidencia
                 {
-                    decimal totalDI = 0;
-                    foreach (var dt in request.DTIncidencia)
-                    {
-                        var dtIncidencia = new DetalleIncidencia();
-                        dtIncidencia.IncidenciaId = incidencia.Id;
-                        dtIncidencia.CIncidenciaId = dt;
-                        dtIncidencia.MontoPenalizacion = GetPrecioUnitarioServicio(request, factura) * Convert.ToDecimal(0.01) * incidencia.Cantidad;
-                        totalDI += dtIncidencia.MontoPenalizacion;
+                    UsuarioId = request.UsuarioId,
+                    CedulaEvaluacionId = request.CedulaEvaluacionId,
+                    IncidenciaId = request.IncidenciaId,
+                    TipoId = request.TipoId,
+                    Pregunta = request.Pregunta,
+                    FechaIncidencia = request.FechaIncidencia,
+                    FechaProgramada = request.FechaProgramada,
+                    UltimoDia = request.UltimoDia,
+                    FechaRealizada = request.FechaRealizada,
+                    FechaInventario = request.FechaInventario,
+                    FechaNotificacion = request.FechaNotificacion,
+                    FechaAcordadaAdmin = request.FechaAcordadaAdmin,
+                    FechaLimite = request.FechaLimite,
+                    FechaEntrega = request.FechaEntrega,
+                    EntregaEnseres = request.EntregaEnseres,
+                    HoraInicio = Convert.ToDateTime(request.HoraInicio).TimeOfDay,
+                    HoraReal = Convert.ToDateTime(request.HoraReal).TimeOfDay,
+                    Ponderacion = request.Ponderacion,
+                    Cantidad = request.Cantidad,
+                    Observaciones = request.Observaciones,
+                    Penalizable = montoPenalizacion > 0 ? true : false,
+                    MontoPenalizacion = montoPenalizacion,
+                    FechaCreacion = DateTime.Now
+                };
 
-                        await _context.AddAsync(dtIncidencia);
+                try
+                {
+                    await _context.AddAsync(incidencia);
+                    await _context.SaveChangesAsync();
+
+                    if (request.DTIncidencia.Count() != 0)
+                    {
+                        decimal totalDI = 0;
+                        foreach (var dt in request.DTIncidencia)
+                        {
+                            var dtIncidencia = new DetalleIncidencia();
+                            dtIncidencia.IncidenciaId = incidencia.Id;
+                            dtIncidencia.CIncidenciaId = dt;
+                            dtIncidencia.MontoPenalizacion = GetPrecioUnitarioServicio(request, factura) * Convert.ToDecimal(0.01) * incidencia.Cantidad;
+                            totalDI += dtIncidencia.MontoPenalizacion;
+
+                            await _context.AddAsync(dtIncidencia);
+                            await _context.SaveChangesAsync();
+                        }
+
+                        var Uincidencia = _context.Incidencias.Where(e => e.Id == incidencia.Id && !e.FechaEliminacion.HasValue).FirstOrDefault();
+                        Uincidencia.MontoPenalizacion = totalDI;
+
                         await _context.SaveChangesAsync();
                     }
 
-                    var Uincidencia = _context.Incidencias.Where(e => e.Id == incidencia.Id && !e.FechaEliminacion.HasValue).FirstOrDefault();
-                    Uincidencia.MontoPenalizacion = totalDI;
-
-                    await _context.SaveChangesAsync();
+                    return incidencia;
                 }
-
-                return incidencia;
-            }
-            catch (Exception ex)
-            {
-                string msg = ex.Message + "\n" + ex.StackTrace + "\n" + ex.InnerException;
-                return null;
-            }
+                catch (Exception ex)
+                {
+                    string msg = ex.Message + "\n" + ex.StackTrace + "\n" + ex.InnerException;
+                    return null;
+                }
+      
         }
 
         public decimal GetPenaDeductiva(IncidenciaCreateCommand incidencia, Factura factura)
@@ -212,6 +215,25 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
             }
             return facturas;
         }
+
+        //Método para comparar el mes de la Fecha de Incidencia ingresada con el Mes
+        public bool ComparaMeses(IncidenciaCreateCommand incidencia)
+        {
+            bool aux;
+            var cedula = _context.CedulaEvaluacion.Single(ce => ce.Id == incidencia.CedulaEvaluacionId);
+          
+            if (incidencia.FechaIncidencia.Month != cedula.MesId)
+            {
+                aux = false;
+            }
+            else
+            {
+                aux = true;
+            }
+
+            return aux;
+        }
+
 
         public decimal GetPrecioUnitarioServicio(IncidenciaCreateCommand incidencia, Factura factura)
         {
@@ -335,7 +357,44 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
                                new DateTime(2024, 12, 26),
                                new DateTime(2024, 12, 27),
                                new DateTime(2024, 12, 30),
-                               new DateTime(2024, 12, 31)
+                               new DateTime(2024, 12, 31),
+
+                //DIAS INHABILES DEL 2025
+                  new DateTime(2025, 01, 01),
+                  new DateTime(2025, 02, 03),
+                  new DateTime(2025, 03, 17),
+                  new DateTime(2025, 04, 16),
+                  new DateTime(2025, 04, 17),
+                  new DateTime(2025, 04, 18),
+                  new DateTime(2025, 05, 01),
+                  new DateTime(2025, 05, 02),
+                  new DateTime(2025, 05, 05),
+                  new DateTime(2025, 07, 16),
+                  new DateTime(2025, 07, 17),
+                  new DateTime(2025, 07, 18),
+                  new DateTime(2025, 07, 21),
+                  new DateTime(2025, 07, 22),
+                  new DateTime(2025, 07, 23),
+                  new DateTime(2025, 07, 24),
+                  new DateTime(2025, 07, 25),
+                  new DateTime(2025, 07, 28),
+                  new DateTime(2025, 07, 29),
+                  new DateTime(2025, 07, 30),
+                  new DateTime(2025, 07, 31),
+                               new DateTime(2025, 09, 16),
+                               new DateTime(2025, 11, 17),
+                               new DateTime(2025, 12, 16),
+                               new DateTime(2025, 12, 17),
+                               new DateTime(2025, 12, 18),
+                               new DateTime(2025, 12, 19),
+                               new DateTime(2025, 12, 20),
+                               new DateTime(2025, 12, 23),
+                               new DateTime(2025, 12, 24),
+                               new DateTime(2025, 12, 25),
+                               new DateTime(2025, 12, 26),
+                               new DateTime(2025, 12, 27),
+                               new DateTime(2025, 12, 30),
+                               new DateTime(2025, 12, 31)
             };
             if (diasInhabiles.Contains(fecha))
             {
