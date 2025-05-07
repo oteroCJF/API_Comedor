@@ -11,6 +11,7 @@ using Comedor.Domain.DFacturas;
 using Comedor.Domain.DIncidencias;
 using Comedor.Domain.DCuestionario;
 using Comedor.Service.EventHandler.Commands.CedulasEvaluacion;
+using System.Globalization;
 
 namespace Comedor.Service.EventHandler.Handlers.CedulasEvaluacion
 {
@@ -47,6 +48,14 @@ namespace Comedor.Service.EventHandler.Handlers.CedulasEvaluacion
                                                                 .Where(cm => cm.Anio == cedula.Anio && cm.MesId == cedula.MesId && cm.ContratoId == cedula.ContratoId)
                                                                 .ToList();
 
+
+                    var ultimoConceptoDiaHabil = _context.ConceptosFactura
+                                                                            .Where(c => facturas.Any() && c.FacturaId == facturas.First().Id)
+                                                                            .OrderByDescending(c => c.FechaServicio)
+                                                                            .FirstOrDefault();
+
+                    decimal subtotalUltimoHabil = ultimoConceptoDiaHabil.Subtotal;
+
                     var respuestas = await Obtienetotales(request.Id, cuestionarioMensual);
                     var calificacion = await GetCalificacionCedula(request.Id, cuestionarioMensual);
 
@@ -63,7 +72,18 @@ namespace Comedor.Service.EventHandler.Handlers.CedulasEvaluacion
                     {
                         cedula.Calificacion = (double)calificacion;
                     }
-                    
+
+                    if (Convert.ToDecimal(cedula.Calificacion) < Convert.ToDecimal(8))
+                    {
+                        cedula.Penalizacion = (subtotalUltimoHabil * Convert.ToDecimal(0.01)) / Convert.ToDecimal(cedula.Calificacion); ;
+                        //cedula.Penalizacion = (Convert.ToDecimal(facturas.Sum(f => f.Subtotal)) * Convert.ToDecimal(0.01)) / Convert.ToDecimal(cedula.Calificacion);
+                        cedula.Penalizacion = Math.Round(cedula.Penalizacion, 2);
+                    }
+                    else
+                    {
+                        cedula.Penalizacion = 0;
+                    }
+
                     cedula.FechaActualizacion = DateTime.Now;
                     
                     await _context.SaveChangesAsync();
@@ -179,6 +199,28 @@ namespace Comedor.Service.EventHandler.Handlers.CedulasEvaluacion
             calificacion = Convert.ToDecimal(calificacion / respuestas.Count());
 
             return calidad ? calificacion + (decimal)1 : calificacion;
+        }
+
+        public DateTime GetUltimoDiaHabilMes(DateTime fechaInicial)
+        {
+            DateTime inicioMes = new DateTime(fechaInicial.Year, fechaInicial.Month, 1);
+            DateTime lastDayMonth = inicioMes.AddMonths(1).AddDays(-1);
+            DayOfWeek day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(lastDayMonth);
+
+            if (day == DayOfWeek.Saturday || day == DayOfWeek.Sunday)
+            {
+                while (true)
+                {
+                    lastDayMonth = lastDayMonth.AddDays(-1);
+                    day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(lastDayMonth);
+                    if (day != DayOfWeek.Saturday && day != DayOfWeek.Sunday)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return lastDayMonth;
         }
     }
 }

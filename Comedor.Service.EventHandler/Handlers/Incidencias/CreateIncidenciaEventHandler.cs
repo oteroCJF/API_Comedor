@@ -107,93 +107,213 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
                                                                          cm.Anio == cedula.Anio &&
                                                                          cm.MesId == cedula.MesId &&
                                                                          cm.ContratoId == cedula.ContratoId);
-            if (respuesta.Respuesta == cuestionario.ACLRS)
+
+            if (cedula.ContratoId >= 3)
             {
-                if (cuestionario.Formula.Contains("CDAS"))
+                if (respuesta.Respuesta == cuestionario.ACLRS)
                 {
-                    montoPenalizacion = GetCostoDiaAnteriorServicio(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * incidencia.Cantidad;
-                }
-                else if (cuestionario.Formula.Contains("CUS"))
-                {
-                    //AGREGAR MINUTOS DE RETRASO PARA EL CALCULO DE LA PENALIZACIÓN DESPUÉS DE LAS DOS HORAS
-                    montoPenalizacion = GetPrecioUnitarioServicio(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * incidencia.Cantidad;
-                }
-                else if (cuestionario.Formula.Contains("CDS"))
-                {
-                    montoPenalizacion = GetCostoDiaServicio(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje);
-                    if (cuestionario.Formula.Contains("NMR"))
+                    //PREGUNTA 2 - NUEVO CONTRATO
+                    if (cuestionario.Formula.Contains("CDIA*PP*NDA"))
                     {
-                        montoPenalizacion = montoPenalizacion * GetMinutosRetraso(incidencia);
+                        montoPenalizacion = GetCostoDiaAnteriorServicio(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje);
                     }
-                    else if (cuestionario.Formula.Contains("NMFR"))
+                    // PREGUNTA 25 - NUEVO CONTRATO 
+                    else if (cuestionario.Formula.Contains("CFDIA*PD"))
                     {
-                        montoPenalizacion = montoPenalizacion * incidencia.Cantidad;
+                        var costoDiaAnterior = GetCostoDiaAnteriorServicio(incidencia, factura);
+                        montoPenalizacion = costoDiaAnterior * Convert.ToDecimal(cuestionario.Porcentaje);
+
                     }
-                }
-                else if (cuestionario.Formula.Contains("ENSERESA"))
-                {
-                    var fechaEntrega = incidencia.FechaEntrega;
-                    if (!incidencia.EntregaEnseres)
+                    else if (cuestionario.Formula.Contains("CFD"))
                     {
-                        fechaEntrega = GetUltimoDiaHabilMes(incidencia.FechaLimite);
+                        if (cuestionario.Formula == "CFD*PP*NDA")
+                        {
+                            //PREGUNTA 3, 17,  - NUEVO CONTRATO 2025
+                            
+                            if (respuesta.Pregunta != 23 && respuesta.Pregunta != 26 && respuesta.Pregunta != 29 && respuesta.Pregunta != 30)
+                            {
+                                //PREGUNTA 3, 17,  - NUEVO CONTRATO 2025
+                                if (respuesta.Pregunta == 3)
+                                {
+                                    var diasAtraso = (incidencia.FechaEntrega - incidencia.FechaLimite).Days;
+                                    incidencia.FechaIncidencia = incidencia.FechaProgramada;
+                                    montoPenalizacion = GetCostoDiaServicio(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * diasAtraso;
+
+                                }
+                                //PREGUNTA 17 - NUEVO CONTRATO 2025
+                                else
+                                {
+                                    var diasAtraso = (incidencia.FechaEntrega - incidencia.FechaProgramada).Days;
+                                    incidencia.FechaIncidencia = incidencia.FechaProgramada;
+                                    montoPenalizacion = GetCostoDiaServicio(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * diasAtraso;
+                                }
+                            }
+                            //PREGUNTA 29, 30 - NUEVO CONTRATO 2025
+                            else if (respuesta.Pregunta == 29 || respuesta.Pregunta == 30)
+                            {
+                                incidencia.FechaIncidencia = incidencia.FechaLimite;
+                                var diasNatAtraso = (incidencia.FechaEntrega - incidencia.FechaLimite).Days;
+                                montoPenalizacion = GetCostoDiaServicio(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * diasNatAtraso;
+                            }
+                            //PREGUNTA 23, 26 - NUEVO CONTRATO 2025
+                            else
+                            {
+                                montoPenalizacion = GetCostoDiaServicio(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje);
+                            }
+
+                        }
+                        //PREGUNTA 5,6,7,8,9,10,11,12,13,14,15,24,27,28 - NUEVO CONTRATO 2025
+                        else if (cuestionario.Formula == "CFD*PD")
+                        {   
+                            montoPenalizacion = GetCostoDiaServicio(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje);
+                        }
+                        //PREGUNTA 18 - NUEVO CONTRATO 2025
+                        else if (cuestionario.Formula == "CFD*PD*NMFR")
+                        {   
+                            montoPenalizacion = GetCostoDiaServicio(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * incidencia.Cantidad;
+                        }
+                        //PREGUNTA 19 - NUEVO CONTRATO 2025
+                        else if (cuestionario.Formula == "CFD*PD*NPRFR")
+                        {
+                            montoPenalizacion = GetCostoDiaServicio(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * incidencia.Cantidad;
+                        }
+                        //PREGUNTA 20 - NUEVO CONTRATO 2025
+                        else if (cuestionario.Formula == "CFD*PD*NDEF")
+                        {
+                            montoPenalizacion = GetCostoFechaInventario(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * CalcularDiasHabiles(incidencia.FechaLimite, incidencia.FechaEntrega);
+                        }
+                        //PREGUNTA 21,22 - NUEVO CONTRATO 2025
+                        else if (cuestionario.Formula == "CFD*CEF*PD*NDEF")
+                        {
+                            incidencia.FechaIncidencia = incidencia.FechaNotificacion;
+                            var diasHabilesAtraso = CalcularDiasHabiles(incidencia.FechaLimite, incidencia.FechaEntrega);
+                            montoPenalizacion = GetCostoDiaServicio(incidencia, factura) * incidencia.Cantidad * Convert.ToDecimal(cuestionario.Porcentaje) * diasHabilesAtraso;
+                        }
                     }
-                    var fechaLimite = incidencia.FechaLimite;
-                    TimeSpan diffDate = fechaEntrega - fechaLimite;
-                    //   var diasAtraso = diffDate.Days;
-                    var diasAtraso = CalcularDiasHabiles(fechaLimite, fechaEntrega);
-
-                    montoPenalizacion = GetCostoFechaInventario(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje);
-                    montoPenalizacion = diasAtraso <= 0 ? montoPenalizacion : montoPenalizacion * diasAtraso;
-                }
-
-                else if (cuestionario.Formula.Contains("ENSERESB"))
-                {
-                    var fechaEntrega = incidencia.FechaEntrega;
-                    if (!incidencia.EntregaEnseres)
+                    //PREGUNTA 4 - NUEVO CONTRATO 2025
+                    else if (cuestionario.Formula.Contains("CPU*PD*NCI"))
                     {
-                        fechaEntrega = GetUltimoDiaHabilMes(incidencia.FechaLimite);
+                        montoPenalizacion = GetPrecioUnitarioServicio(incidencia, factura) * (Convert.ToDecimal(cuestionario.Porcentaje) * incidencia.DTIncidencia.Count());
                     }
-
-                    var fechaLimite = incidencia.FechaLimite;
-                    TimeSpan diffDate = fechaEntrega - fechaLimite;
-                    //var diasAtraso = diffDate.Days;
-                    var diasAtraso = CalcularDiasHabiles(fechaLimite, fechaEntrega);
-
-                    montoPenalizacion = GetCostoFechaInventario(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * incidencia.Cantidad;
-                    montoPenalizacion = diasAtraso <= 0 ? montoPenalizacion : montoPenalizacion * diasAtraso;
-                }
-                else if (cuestionario.Formula.Contains("ENSERESC"))
-                {
-                    var fechaEntrega = incidencia.FechaEntrega;
-                    if (!incidencia.EntregaEnseres)
+                    //PREGUNTA 16 - NUEVO CONTRATO 2025
+                    else if (cuestionario.Formula.Contains("CFS*PP*NDA"))
                     {
-                        fechaEntrega = GetUltimoDiaHabilMes(incidencia.FechaLimite);
+                        var diasAtraso = (incidencia.FechaEntrega - incidencia.FechaLimite).Days;
+                        incidencia.FechaIncidencia = incidencia.FechaLimite;
+                        montoPenalizacion = GetCostoSemanalNuevoContrato(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * diasAtraso;
                     }
-                    var fechaAcordada = incidencia.FechaAcordadaAdmin;
-                    TimeSpan diffDate = fechaEntrega - fechaAcordada;
-                    var diasAtraso = diffDate.Days;
+                    //PREGUNTA 31 - NUEVO CONTRATO
+                    else if (cuestionario.Formula.Contains("CQDA*PP*NDA"))
+                    {              
+                        var diasAtraso = (incidencia.FechaEntrega - incidencia.FechaIncidencia).Days;
+                        montoPenalizacion = GetCostoDiaServicio(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * diasAtraso;
+                    }
+                    //PREGUNTA 32 - NUEVO CONTRATO
+                    else if (cuestionario.Formula.Contains("CFMI*PP*NDA"))
+                    {
+                        var diasAtraso = (incidencia.FechaEntrega - incidencia.FechaIncidencia).Days;
+                        montoPenalizacion = GetCostoDiaServicio(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * diasAtraso;
+                    }
 
-                    montoPenalizacion = GetCostoFechaInventario(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * incidencia.Cantidad;
-                    montoPenalizacion = diasAtraso <= 0 ? montoPenalizacion : montoPenalizacion * diasAtraso;
+
                 }
-                else if (cuestionario.Formula.Contains("CFS"))
+                
+                return montoPenalizacion;
+
+            }
+            else
+            {
+
+                if (respuesta.Respuesta == cuestionario.ACLRS)
                 {
-                    var ultimoDia = incidencia.UltimoDia;
-                    var fechaProgramada = incidencia.FechaProgramada;
-                    TimeSpan diffDate = ultimoDia - fechaProgramada;
-                    var diasAtraso = diffDate.Days;
-                    var montoFactura = GetCostoSemanal(incidencia, factura);
-                    var porcentaje = Convert.ToDecimal(cuestionario.Porcentaje);
-                    montoPenalizacion = (montoFactura * porcentaje) * diasAtraso;
-                }
-                else if (cuestionario.Formula.Contains("CTPS"))
-                {
-                    montoPenalizacion = GetCostoDiaServicio(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * incidencia.Ponderacion * incidencia.Cantidad;
+                    if (cuestionario.Formula.Contains("CDAS"))
+                    {
+                        montoPenalizacion = GetCostoDiaAnteriorServicio(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * incidencia.Cantidad;
+                    }
+                    else if (cuestionario.Formula.Contains("CUS"))
+                    {
+                        //AGREGAR MINUTOS DE RETRASO PARA EL CALCULO DE LA PENALIZACIÓN DESPUÉS DE LAS DOS HORAS
+                        montoPenalizacion = GetPrecioUnitarioServicio(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * incidencia.Cantidad;
+                    }
+                    else if (cuestionario.Formula.Contains("CDS"))
+                    {
+                        montoPenalizacion = GetCostoDiaServicio(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje);
+                        if (cuestionario.Formula.Contains("NMR"))
+                        {
+                            montoPenalizacion = montoPenalizacion * GetMinutosRetraso(incidencia);
+                        }
+                        else if (cuestionario.Formula.Contains("NMFR"))
+                        {
+                            montoPenalizacion = montoPenalizacion * incidencia.Cantidad;
+                        }
+                    }
+                    else if (cuestionario.Formula.Contains("ENSERESA"))
+                    {
+                        var fechaEntrega = incidencia.FechaEntrega;
+                        if (!incidencia.EntregaEnseres)
+                        {
+                            fechaEntrega = GetUltimoDiaHabilMes(incidencia.FechaLimite);
+                        }
+                        var fechaLimite = incidencia.FechaLimite;
+                        TimeSpan diffDate = fechaEntrega - fechaLimite;
+                        //   var diasAtraso = diffDate.Days;
+                        var diasAtraso = CalcularDiasHabiles(fechaLimite, fechaEntrega);
+
+                        montoPenalizacion = GetCostoFechaInventario(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje);
+                        montoPenalizacion = diasAtraso <= 0 ? montoPenalizacion : montoPenalizacion * diasAtraso;
+                    }
+
+                    else if (cuestionario.Formula.Contains("ENSERESB"))
+                    {
+                        var fechaEntrega = incidencia.FechaEntrega;
+                        if (!incidencia.EntregaEnseres)
+                        {
+                            fechaEntrega = GetUltimoDiaHabilMes(incidencia.FechaLimite);
+                        }
+
+                        var fechaLimite = incidencia.FechaLimite;
+                        TimeSpan diffDate = fechaEntrega - fechaLimite;
+                        //var diasAtraso = diffDate.Days;
+                        var diasAtraso = CalcularDiasHabiles(fechaLimite, fechaEntrega);
+
+                        montoPenalizacion = GetCostoFechaInventario(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * incidencia.Cantidad;
+                        montoPenalizacion = diasAtraso <= 0 ? montoPenalizacion : montoPenalizacion * diasAtraso;
+                    }
+                    else if (cuestionario.Formula.Contains("ENSERESC"))
+                    {
+                        var fechaEntrega = incidencia.FechaEntrega;
+                        if (!incidencia.EntregaEnseres)
+                        {
+                            fechaEntrega = GetUltimoDiaHabilMes(incidencia.FechaLimite);
+                        }
+                        var fechaAcordada = incidencia.FechaAcordadaAdmin;
+                        TimeSpan diffDate = fechaEntrega - fechaAcordada;
+                        var diasAtraso = diffDate.Days;
+
+                        montoPenalizacion = GetCostoFechaInventario(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * incidencia.Cantidad;
+                        montoPenalizacion = diasAtraso <= 0 ? montoPenalizacion : montoPenalizacion * diasAtraso;
+                    }
+                    else if (cuestionario.Formula.Contains("CFS"))
+                    {
+                        var ultimoDia = incidencia.UltimoDia;
+                        var fechaProgramada = incidencia.FechaProgramada;
+                        TimeSpan diffDate = ultimoDia - fechaProgramada;
+                        var diasAtraso = diffDate.Days;
+                        var montoFactura = GetCostoSemanal(incidencia, factura);
+                        var porcentaje = Convert.ToDecimal(cuestionario.Porcentaje);
+                        montoPenalizacion = (montoFactura * porcentaje) * diasAtraso;
+                    }
+                    else if (cuestionario.Formula.Contains("CTPS"))
+                    {
+                        montoPenalizacion = GetCostoDiaServicio(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * incidencia.Ponderacion * incidencia.Cantidad;
+                    }
+
                 }
             }
 
             return montoPenalizacion;
         }
+
 
         public Factura GetFactura(IncidenciaCreateCommand incidencia)
         {
@@ -202,10 +322,21 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
                                                                 && r.MesId == cedula.MesId);
             var facturas = new Factura();
 
-            if (incidencia.Pregunta == 25 || incidencia.Pregunta == 26 || incidencia.Pregunta == 27)
-            {
-                facturas = _context.Facturas.Single(f => (f.RepositorioId) == (repositorio.Id - 1) &&
-                                                            cedula.InmuebleId == f.InmuebleId && f.Tipo.Equals("Factura") && f.FechaEliminacion == null);
+            if (cedula.ContratoId == 2){
+
+                 if (incidencia.Pregunta == 25 || incidencia.Pregunta == 26 || incidencia.Pregunta == 27)
+                 {
+                    facturas = _context.Facturas.Single(f => (f.RepositorioId) == (repositorio.Id - 1) &&
+                                                         cedula.InmuebleId == f.InmuebleId && f.Tipo.Equals("Factura") && f.FechaEliminacion == null);
+                 }
+                else
+                {
+                    facturas = _context.Facturas.Single(f => f.RepositorioId == repositorio.Id &&
+                                                        cedula.InmuebleId == f.InmuebleId &&
+                                                        f.Tipo.Equals("Factura") && f.FechaEliminacion == null);
+                }
+                
+                return facturas;
             }
             else
             {
@@ -415,6 +546,16 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
             return costoSemanal;
         }
 
+        public decimal GetCostoSemanalNuevoContrato(IncidenciaCreateCommand incidencia, Factura factura)
+        {
+            var fechaInicio = GetFechaInicialCostoSemanalNuevoContrato(incidencia, factura);
+            var fechaFinal = GetFechaFinalCostoSemanalNuevoContrato(factura, fechaInicio, incidencia);
+            var costoSemanal = _context.ConceptosFactura.Where(c => c.FacturaId == factura.Id && c.FechaServicio >= fechaInicio && c.FechaServicio <= fechaFinal).Sum(f => f.Subtotal);
+
+            return costoSemanal;
+        }
+
+
         public DateTime GetFechaInicialCostoSemanal(IncidenciaCreateCommand incidencia, Factura factura)
         {
             var fechaInicial = new DateTime();
@@ -448,13 +589,29 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
                 DayOfWeek day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(fc.FechaServicio);
                 if (day == DayOfWeek.Friday)
                 {
-                    fechaInicial = fc.FechaServicio;
+                    fechaFinal = fc.FechaServicio;
                     break;
                 }
             }
-            return fechaInicial;
+            return fechaFinal;
         }
 
+        public DateTime GetFechaFinalCostoSemanalNuevoContrato(Factura factura, DateTime fechaInicial, IncidenciaCreateCommand incidencia)
+        {
+            var fechaFinal = new DateTime();
+            var fechas = _context.ConceptosFactura.Where(c => c.FacturaId == factura.Id && c.FechaServicio >= incidencia.FechaLimite);
+            bool inhabil = false;
+            foreach (var fc in fechas)
+            {
+                DayOfWeek day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(fc.FechaServicio);
+                if (day == DayOfWeek.Friday)
+                {
+                    fechaFinal = fc.FechaServicio;
+                    break;
+                }
+            }
+            return fechaFinal;
+        }
         public DateTime GetUltimoDiaHabilMes(DateTime fechaInicial)
         {
             DateTime inicioMes = new DateTime(fechaInicial.Year, fechaInicial.Month, 1);
@@ -477,65 +634,37 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
             return lastDayMonth;
         }
 
-        //  METODO PARA CALCULAR EL NUMERO DE DÍAS HABILES ENTRE DOS FECHAS
+        public DateTime GetFechaInicialCostoSemanalNuevoContrato(IncidenciaCreateCommand incidencia, Factura factura)
+        {
+            var fechaInicial = new DateTime();
+            var fechas = _context.ConceptosFactura
+                 .Where(c => c.FacturaId == factura.Id && c.FechaServicio <= incidencia.FechaLimite)
+                 .OrderByDescending(c => c.FechaServicio) // Ordenar para encontrar el lunes más cercano hacia atrás
+                 .ToList(); 
+            
+            bool inhabil = false;
 
-        //public async Task<JsonResult> CalculaDiasHabilesEntreDosFechas(string fechaLim, string fechaEnt)
-        //{
-        //    int cuentaDiasHabiles = 0;
-        //    var fechaLimite = Convert.ToDateTime(fechaLim);
-        //    var fechaEntrega = Convert.ToDateTime(fechaEnt);
 
-        //    List<DateTime> diasInhabiles = new List<DateTime>()
-        //    {
-        //         new DateTime(2024, 01, 01),
-        //          new DateTime(2024, 02, 05),
-        //          new DateTime(2024, 03, 18),
-        //          new DateTime(2024, 05, 01),
-        //          new DateTime(2024, 07, 16),
-        //          new DateTime(2024, 07, 17),
-        //          new DateTime(2024, 07, 18),
-        //          new DateTime(2024, 07, 19),
-        //          new DateTime(2024, 07, 23),
-        //          new DateTime(2024, 07, 24),
-        //          new DateTime(2024, 07, 25),
-        //          new DateTime(2024, 07, 26),
-        //          new DateTime(2024, 07, 22),
-        //          new DateTime(2024, 07, 29),
-        //          new DateTime(2024, 07, 30),
-        //          new DateTime(2024, 07, 31),
-        //                     new DateTime(2024, 09, 16),
-        //                      new DateTime(2024, 11, 18),
-        //                       new DateTime(2024, 12, 16),
-        //                       new DateTime(2024, 12, 17),
-        //                       new DateTime(2024, 12, 18),
-        //                       new DateTime(2024, 12, 19),
-        //                       new DateTime(2024, 12, 20),
-        //                       new DateTime(2024, 12, 23),
-        //                       new DateTime(2024, 12, 24),
-        //                       new DateTime(2024, 12, 25),
-        //                       new DateTime(2024, 12, 26),
-        //                       new DateTime(2024, 12, 27),
-        //                       new DateTime(2024, 12, 30),
-        //                       new DateTime(2024, 12, 31)
-        //    };
+            foreach (var fc in fechas)
+            {
+                DayOfWeek day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(fc.FechaServicio);
 
-        //    for (; true;)
-        //    {
-        //        fechaLimite = fechaLimite.AddDays(1);
-        //        DayOfWeek day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(fechaLimite);
+                if (day == DayOfWeek.Monday)
+                {
+                    fechaInicial = fc.FechaServicio;
+                    break; // Encontramos un lunes, podemos detenernos
+                }
+                else
+                {
+                    // Si la fecha de servicio actual es la fecha límite y no es lunes,
+                    // disminuimos un día y verificamos si es lunes.
+                    DateTime fechaAnterior = fc.FechaServicio.AddDays(-1);
+                }
+            }
 
-        //        if (!await.EsDiaInhabil(fechaLimite.Year, fechaLimite.ToString("yyyy-MM-ddTHH:mm:ss")) && day != DayOfWeek.Saturday && DayOfWeek.Sunday != day)
-        //        {
-        //            cuentaDiasHabiles++;
-        //        }
+            return fechaInicial;
+        }
 
-        //        if (fechaLimite == fechaEntrega)
-        //        {
-        //            break;
-        //        }
-        //    }
 
-        //    return new JsonResult(cuentaDiasHabiles);
-        //}
     }
 }
