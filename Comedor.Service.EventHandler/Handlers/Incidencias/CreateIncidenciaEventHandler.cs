@@ -132,7 +132,7 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
                             
                             if (respuesta.Pregunta != 23 && respuesta.Pregunta != 26 && respuesta.Pregunta != 29 && respuesta.Pregunta != 30)
                             {
-                                //PREGUNTA 3, 17,  - NUEVO CONTRATO 2025
+                                //PREGUNTA 3
                                 if (respuesta.Pregunta == 3)
                                 {
                                     var diasAtraso = (incidencia.FechaEntrega - incidencia.FechaLimite).Days;
@@ -143,8 +143,7 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
                                 //PREGUNTA 17 - NUEVO CONTRATO 2025
                                 else
                                 {
-                                    var diasAtraso = (incidencia.FechaEntrega - incidencia.FechaProgramada).Days;
-                                    incidencia.FechaIncidencia = incidencia.FechaProgramada;
+                                    var diasAtraso = (incidencia.FechaEntrega - incidencia.FechaIncidencia).Days;
                                     montoPenalizacion = GetCostoDiaServicio(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * diasAtraso;
                                 }
                             }
@@ -214,12 +213,8 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
                         var diasAtraso = (incidencia.FechaEntrega - incidencia.FechaIncidencia).Days;
                         montoPenalizacion = GetCostoDiaServicio(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * diasAtraso;
                     }
-
-
-                }
-                
+                }           
                 return montoPenalizacion;
-
             }
             else
             {
@@ -661,6 +656,25 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
                     DateTime fechaAnterior = fc.FechaServicio.AddDays(-1);
                 }
             }
+
+            return fechaInicial;
+        }
+
+        public DateTime GetFechaInicialCostoSemanalNuevoContratoNEW(IncidenciaCreateCommand incidencia, Factura factura)
+        {
+            var fechaInicial = new DateTime();
+            var fechas = _context.ConceptosFactura
+                 .Where(c => c.FacturaId == factura.Id && c.FechaServicio <= incidencia.FechaLimite)
+                 .OrderByDescending(c => c.FechaServicio) // Ordenar para encontrar el lunes más cercano hacia atrás
+                 .ToList();
+
+            bool inhabil = false;
+
+            DayOfWeek firstDayOfWeek = CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
+            DayOfWeek day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(incidencia.FechaLimite);
+
+            int daysToSubtract = (int)day - (int)firstDayOfWeek;
+
 
             return fechaInicial;
         }

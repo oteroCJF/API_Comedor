@@ -77,7 +77,7 @@ namespace Comedor.Service.EventHandler.Handlers.CedulasEvaluacion
                     {
                         cedula.Penalizacion = (subtotalUltimoHabil * Convert.ToDecimal(0.01)) / Convert.ToDecimal(cedula.Calificacion); ;
                         //cedula.Penalizacion = (Convert.ToDecimal(facturas.Sum(f => f.Subtotal)) * Convert.ToDecimal(0.01)) / Convert.ToDecimal(cedula.Calificacion);
-                        cedula.Penalizacion = Math.Round(cedula.Penalizacion, 2);
+                        //cedula.Penalizacion = Math.Round(cedula.Penalizacion, 2);
                     }
                     else
                     {

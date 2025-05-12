@@ -141,8 +141,7 @@ namespace Comedor.Service.EventHandler.Handlers.Incidencias
                                 //PREGUNTA 17 - NUEVO CONTRATO 2025
                                 else
                                 {
-                                    var diasAtraso = (incidencia.FechaEntrega - incidencia.FechaProgramada).Days;
-                                    incidencia.FechaIncidencia = incidencia.FechaProgramada;
+                                    var diasAtraso = (incidencia.FechaEntrega - incidencia.FechaIncidencia).Days;
                                     montoPenalizacion = GetCostoDiaServicio(incidencia, factura) * Convert.ToDecimal(cuestionario.Porcentaje) * diasAtraso;
                                 }
                             }
